@@ -33,9 +33,11 @@ class TaskSearch:
                 continue
             task_data = self.project_data.loc[neighbor_task_number]
             task_id = task_data['#']
-            spent_time = task_data['Spent time']
+            spent_time = task_data['TotalSpentWithUnbillable']
             task_title = task_data['Subject']
-            neighbor_estimates.append({'id': task_id, 'title': task_title, 'time': spent_time})
+            task_developer = task_data['Assignee'] # @todo implement Developer identification
+            task_unbillable = task_data['UnbillableTotal']
+            neighbor_estimates.append({'id': task_id, 'title': task_title, 'time': spent_time, 'developer': task_developer, 'unbillable': task_unbillable})
         return neighbor_estimates
 
     def load_all_data(self, path_to_csv_files, session_length=10):
@@ -77,8 +79,8 @@ class TaskSearch:
     def set_unbillable_field(self):
         self.process_unbillable()
         self.project_data['Unbillable'] = self.project_data['#'].apply(self.get_unbillable_by_task_id)
-        self.project_data['Unbillable total'] = self.project_data['#'].apply(self.get_total_unbillable_by_task_id)
-        self.project_data['TotalSspendWithUnbillable'] = self.project_data['Total spent time'] + self.project_data['Unbillable total']
+        self.project_data['UnbillableTotal'] = self.project_data['#'].apply(self.get_total_unbillable_by_task_id)
+        self.project_data['TotalSpentWithUnbillable'] = self.project_data['Total spent time'] + self.project_data['UnbillableTotal']
     def spent_time_hours(self, time):
         return int(time)
 
@@ -92,7 +94,7 @@ class TaskSearch:
 
     def aggregate(self, tasks):
         tasks_records = self.project_data[self.project_data['#'].isin(tasks)]
-        tasks_records = tasks_records['Spent time']
+        tasks_records = tasks_records['Spent time'] #with unbillable???
         tasks_records.dropna()
         random_hash = random.getrandbits(10)
         image_file = f'images/{random_hash}hist.png'

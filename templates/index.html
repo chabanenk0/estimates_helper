@@ -33,7 +33,7 @@
 			{% for task in tasks %}
 			<div class="task">
 			    <input type="checkbox" name="tasks[{{task.id}}]" class="task-checkbox" data-id="{{task.id}}" id="checkbox-id-{{task.id}}">
-                <label for="checkbox-id-{{task.id}}">{{task.title}}</label>
+                <label for="checkbox-id-{{task.id}}"><span class="task-title">{{task.title}}</span>(Total Spent {{ task.time }}h, Unbillable: {{ task.unbillable }} h, Developer: {{ task.developer }})</label>
             </div>
 			{% endfor %}
 		</fieldset>
