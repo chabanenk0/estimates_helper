@@ -1,0 +1,25 @@
+<html>
+<head>
+	<title>Estimates helper</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
+    <script src="{{ url_for('static', filename='js/jquery-3.3.1.slim.min.js') }}" ></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.js') }}" ></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.js') }}" ></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}" ></script>
+</head>
+<body>
+<div class="container">
+	<h1>Estimates aggregation</h1>
+	<p>Statistics:</p>
+	<p>Mean: {{tasks_stats.mean}}</p>
+	<p>Max: {{tasks_stats.max}}</p>
+	<p>Min: {{tasks_stats.min}}</p>
+	<p>Standard deviation: {{tasks_stats.std}}</p>
+    <p>Mean-2*std: {{tasks_stats.mean - 2*tasks_stats.std}}</p>
+	<p>Mean+2*std: {{tasks_stats.mean + 2*tasks_stats.std}}</p>
+	<img src="{{ url_for('static', filename=tasks_stats.gauss_image) }}" alt="Gaussian distribition"/>
+	<a href="/">Back</a>
+</div>
+</body>
+</html>

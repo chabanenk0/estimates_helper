@@ -1,0 +1,46 @@
+<html>
+<head>
+	<title>Estimates helper</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
+    <script src="{{ url_for('static', filename='js/jquery-3.3.1.slim.min.js') }}" ></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.js') }}" ></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.js') }}" ></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}" ></script>
+</head>
+<body>
+<div class="container">
+	<h1>Estimates helper</h1>
+	<form class="task-selection-form" action="/tasks/" method="POST">
+		<input type="text" name="task_keywords" class="text-input" value="{{search_query}}"/>
+		<input type="submit" value="refresh">
+        <div class="methods-selection">
+            <p>Methods:</p>
+            <input type="checkbox" name="method_knn" id="method-knn" checked />
+            <label for="method-knn">K-nairest neighbours</label>
+            <label for="neighbours-number">neighbours number</label>
+            <input id="neighbours-number" name="n_neighbour" value="{{ n_neighbour }}">
+            <input type="checkbox" name="method_word2vec" id="method-word2vec" disabled />
+            <label for="method-word2vec">Word2vec</label>
+            <input type="checkbox" name="method_text2vec" id="method-text2vec" disabled />
+            <label for="method-text2vec">Text2vec</label>
+        </div>
+	</form>
+	<form class="task-selection-form" method="post" action="/aggregate/">
+		<fieldset class="tasks-list">
+            <input type="checkbox" id="checkbox-select-all">
+            <label for="checkbox-select-all">Select all</label>
+			{% for task in tasks %}
+			<div class="task">
+			    <input type="checkbox" name="tasks[{{task.id}}]" class="task-checkbox" data-id="{{task.id}}" id="checkbox-id-{{task.id}}">
+                <label for="checkbox-id-{{task.id}}">{{task.title}}</label>
+            </div>
+			{% endfor %}
+		</fieldset>
+        <input type="hidden" name="tasks_selected" id="tasks-selected">
+		<input type="submit" name="Aggregate" id="aggregate">
+    </form>
+
+</div>
+</body>
+</html>
