@@ -1,8 +1,12 @@
+import os
+
 from task_search import TaskSearch
 from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
-taskSearch = TaskSearch()
+current_directory = os.path.dirname(os.path.abspath(__file__))
+data_directory = '/home/dmitriych/Documents/dv_tasks/data';
+taskSearch = TaskSearch(current_directory, data_directory)
 
 
 @app.route('/', methods=['GET', 'POST'])

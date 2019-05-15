@@ -11,8 +11,14 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.neighbors import KNeighborsClassifier
 
 class TaskSearch:
-    def __init__(self):
-        self.load_all_data('/home/dmitry/Development/geekhubds/dv_tasks_project/data')
+    def __init__(self, root_dir='~/estimates_helper/data', data_dir=''):
+        self._root_dir = root_dir
+        self._data_dir = data_dir
+        if (self._data_dir == ''):
+            self._data_dir = os.path.join(self._root_dir, 'data')
+        self.load_all_data(self._data_dir)
+        self._images_directory = os.path.join(self._root_dir, 'static', 'images')
+        print(self._images_directory)
         self.set_unbillable_field()
         self.n_neighbors = 10
         self.metric = 'cosine'
@@ -41,6 +47,7 @@ class TaskSearch:
         return neighbor_estimates
 
     def load_all_data(self, path_to_csv_files, session_length=10):
+        print(path_to_csv_files)
         files = os.scandir(path_to_csv_files)
         sites = dict()
         max_code = 1
@@ -97,16 +104,16 @@ class TaskSearch:
         tasks_records = tasks_records['Spent time'] #with unbillable???
         tasks_records.dropna()
         random_hash = random.getrandbits(10)
-        image_file = f'images/{random_hash}hist.png'
+        image_file = f'{random_hash}hist.png'
         fig = plt.figure()
         tasks_records.hist(bins=30)
-        fig.savefig('/home/dmitry/Development/geekhubds/dv_tasks_project/estimates_webapp/static/' + image_file)
+        fig.savefig(os.path.join(self._images_directory, image_file))
         task_statistics = {
             'mean': tasks_records.mean(),
             'min': tasks_records.min(),
             'max': tasks_records.max(),
             'std': tasks_records.std(),
-            'gauss_image': image_file
+            'gauss_image': os.path.join('images', image_file)
         }
 
         return task_statistics
