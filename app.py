@@ -5,8 +5,8 @@ from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
 current_directory = os.path.dirname(os.path.abspath(__file__))
-data_directory = '/home/dmitriych/Documents/dv_tasks/data';
-taskSearch = TaskSearch(current_directory, data_directory)
+
+taskSearch = TaskSearch(current_directory)
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -35,4 +35,4 @@ def aggregate():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0')
