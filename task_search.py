@@ -38,7 +38,7 @@ class TaskSearch:
             if neighbor_distance > (np.sum(np.abs(test_word_vectorized)) + np.sum(np.abs(self.vect.getrow(neighbor_task_number)))):
                 continue
             task_data = self.project_data.loc[neighbor_task_number]
-            task_id = task_data['#']
+            task_id = int(task_data['#'])
             spent_time = task_data['TotalSpentWithUnbillable']
             task_title = task_data['Subject']
             task_developer = task_data['Assignee'] # @todo implement Developer identification

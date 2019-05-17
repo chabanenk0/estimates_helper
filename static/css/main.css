@@ -2,3 +2,19 @@
 .task-selection-form input.text-input {
 	width: 80%;
 }
+
+.task-selection-form .task-label {
+	width: 90%;
+}
+
+.task-selection-form .select-all {
+	border-bottom: 1px solid black;
+}
+
+.task-selection-form .select-all label {
+	margin-bottom: 0;
+}
+
+.tasks-list .task {
+	border-bottom: 1px dashed black;
+}
