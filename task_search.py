@@ -20,6 +20,7 @@ class TaskSearch:
         self._images_directory = os.path.join(self._root_dir, 'static', 'images')
         print(self._images_directory)
         self.set_unbillable_field()
+        self.set_developer_field()
         self.n_neighbors = 10
         self.metric = 'cosine'
         self.initialize_knn()
@@ -41,7 +42,7 @@ class TaskSearch:
             task_id = int(task_data['#'])
             spent_time = task_data['TotalSpentWithUnbillable']
             task_title = task_data['Subject']
-            task_developer = task_data['Assignee'] # @todo implement Developer identification
+            task_developer = task_data['Developer']
             task_unbillable = task_data['UnbillableTotal']
             neighbor_estimates.append({'id': task_id, 'title': task_title, 'time': spent_time, 'developer': task_developer, 'unbillable': task_unbillable})
         return neighbor_estimates
@@ -58,6 +59,7 @@ class TaskSearch:
                 print(filename)
                 project_data = pd.read_csv(path_to_csv_files + '/' + filename, error_bad_lines=False)
                 self.project_data = self.project_data.append(project_data, ignore_index=True)
+
     def process_unbillable(self):
         unbillable_tasks = self.project_data[self.project_data['Subject'].str.contains('#\d{1,6}', regex=True) & ((self.project_data['Project'] == '[DVB] DV Billable') | (self.project_data['Project'] == '[DV] Default Value'))]
         self.unbillable_tasks_data = {}
@@ -72,6 +74,7 @@ class TaskSearch:
             unbillable_spent = task['Spent time']
             unbillable_total_spent = task['Total spent time']
             self.unbillable_tasks_data[real_task_id] = [unbillable_spent, unbillable_total_spent]
+
     def get_unbillable_by_task_id(self, task_id):
         if task_id in self.unbillable_tasks_data.keys():
             return self.unbillable_tasks_data[task_id][0]
@@ -90,6 +93,32 @@ class TaskSearch:
         self.project_data['TotalSpentWithUnbillable'] = self.project_data['Total spent time'] + self.project_data['UnbillableTotal']
     def spent_time_hours(self, time):
         return int(time)
+
+    def process_developer(self):
+        tracking_data = pd.read_csv(os.path.join(self._root_dir, 'tracking', 'timelog.csv'), error_bad_lines=False)
+        self.tasks_by_developer = {}
+        for index, task in tracking_data.iterrows():
+            res = task
+            task_subject = task['Issue']
+            if (not task_subject or task_subject == 'nan' or type(task_subject) == float):
+                continue;
+            regexp = re.compile('#\d{1,6}')
+            matches = regexp.search(task_subject)
+            real_task_id = matches.group(0)
+            real_task_id = real_task_id[1:]
+            real_task_id = int(real_task_id)
+            developer = task['User']
+            self.tasks_by_developer[real_task_id] = developer
+
+    def get_developer_by_task_id(self, task_id):
+        if task_id in self.tasks_by_developer.keys():
+            return self.tasks_by_developer[task_id]
+        else:
+            return ''
+
+    def set_developer_field(self):
+        self.process_developer()
+        self.project_data['Developer'] = self.project_data['#'].apply(self.get_developer_by_task_id)
 
     def initialize_knn(self):
         vectorizer = CountVectorizer(stop_words='english')
